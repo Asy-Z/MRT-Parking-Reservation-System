@@ -1,0 +1,214 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Manager - MRT Parking Reservation System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; 
+        }
+
+        .navbar {
+            background-color: #f8f9fa; 
+            border-bottom: 2px solid #343a40;
+        }
+
+        .navbar-brand {
+            color: #343a40;
+        }
+
+        .navbar-nav .nav-link {
+            color: #343a40;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #adb5bd;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 25px;
+            margin-top: 9px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-right: 1px solid #ccc;
+            padding-right: 40px;
+        }
+
+        .left-section h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .right-section {
+            padding-left: 40px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control {
+            height: 45px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background-color: #343a40;
+            border: none;
+            height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #495057;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: #ffffff;
+            text-align: left;
+            padding: 15px;
+            position: fixed; 
+            bottom: 0; 
+            left: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="col-md-2 text-md-end"> 
+            <img class="img-fluid" src="{% static 'assets/logo.png' %}" alt="logo">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                {% if request.session.role == 'Commuter' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservation_creation' %}">Reserve Your Spot</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservation_view' %}">View Your Reservation</a>
+                    </li>
+                {% endif %}
+                {% if request.session.role == 'Administrator' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Parking Manager</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservation_report' %}">Reservation Report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'transaction' %}">Transaction Record</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container d-flex">
+
+        <div class="col-md-6 left-section">
+            <h1>MRT Parking Facility Manager</h1>
+        </div>
+    
+        <div class="col-md-6 right-section">
+
+            <!-- Messages -->
+            {% if messages %}
+                <div class="alert-container">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="POST" action="{% url 'parking_manager' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="chooseStation">Choose Station</label>
+                    <select id="chooseStation" name="station" class="form-control">
+                        <option>Select</option>
+                        {% for MRT in parking_spots %}
+                            <option value="{{ MRT.0 }}">{{ MRT.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="chooseLevel">Choose Level</label>
+                    <select id="chooseLevel" name="level" class="form-control">
+                        <option>Select</option>
+                        <option value="1">First</option>
+                        <option value="2">Second</option>
+                        <option value="3">Third</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="parkingBox">Parking Box</label>
+                    <select id="parkingBox" name="box_no" class="form-control">
+                        <option>Select</option>
+                        {% for box in ParkBox %}
+                            <option value="{{ box.0 }}">{{ box.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>                
+    
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" class="form-control">
+                        <option>Select</option>
+                        {% for kondisi in kondisi_choices %}
+                            <option value="{{ kondisi.0 }}">{{ kondisi.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+    
+                <button type="submit" class="btn btn-primary">Update Parking Space</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Copyright © 2024 Muhammad Asyraf Bin Zakaria</p> | 
+        <a href="{% url 'logout' %}" class="text-white">Logout</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

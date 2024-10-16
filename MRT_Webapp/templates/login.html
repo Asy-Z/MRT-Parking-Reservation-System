@@ -1,0 +1,81 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MRT Parking Reservation System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f8f9fa; /* Outer background color */
+        }
+        
+        .outer-container {
+            background-color: #e9ecef; /* Light grey background inside the container */
+            padding: 100px; /* Increased padding around the container to center the card */
+        }
+        
+        .inner-container {
+            background-color: #ffffff; /* Background color for the framed content */
+            border: 3px solid #343a40; /* Dark border around the content */
+            border-radius: 5px; /* Rounded corners for the frame */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for a lifted effect */
+            padding: 100px 200px; /* Increased padding inside the container */
+        }
+        
+        .display-4 {
+            color: #343a40; /* Darker text color */
+            margin-bottom: 30px; /* Space below title */
+            text-align: center; /* Center the title */
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            height: 45px; /* Increase height of the input fields */
+        }
+        
+        .btn-custom {
+            width: 100%;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="outer-container vh-100 d-flex justify-content-center align-items-center">
+        <div class="inner-container">
+            <h1 class="display-4 font-weight-bold">Better Park Now!</h1>
+            
+            {% if login %}
+                {% for login in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-dark btn-lg btn-custom">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Cancelled - MRT Parking Reservation System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; 
+        }
+
+        .navbar {
+            background-color: #f8f9fa; 
+            border-bottom: 2px solid #343a40;
+        }
+
+        .navbar-brand {
+            color: #343a40; 
+        }
+
+        .navbar-nav .nav-link {
+            color: #343a40; 
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #adb5bd; 
+        }
+
+        .container {
+            margin: 100px; 
+            padding: 50px; 
+            text-align: center; 
+            background-color: #e9ecef; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+        }
+
+        .title {
+            font-size: 36px; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+        }
+
+        .footer {
+            background-color: #343a40; 
+            color: #ffffff; 
+            text-align: left; 
+            padding: 15px; 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+        }
+
+        .btn {
+            margin: 10px; 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="col-md-2 text-md-end"> 
+            <img class="img-fluid" src="{% static 'assets/logo.png' %}" alt="logo">
+        </div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reservation_creation' %}">Create a Reservation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reservation_view' %}">View Your Reservation</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="title">Reservation Cancelled</div>
+        <p>Your reservation has been successfully cancelled.</p>
+        <a href="{% url 'reservation_creation' %}" class="btn btn-primary">Create a Reservation</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Homepage</a>
+    </div>
+
+    <footer class="footer">
+        <p>Copyright © 2024 Muhammad Asyraf Bin Zakaria</p>|
+        <a href="{% url 'logout' %}" class="text-white">Logout</a>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

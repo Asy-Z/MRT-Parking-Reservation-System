@@ -1,0 +1,160 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Records - MRT Parking Reservation System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #343a40;
+        }
+
+        .navbar-brand {
+            color: #343a40;
+            /* Brand color */
+        }
+
+        .navbar-nav .nav-link {
+            color: #343a40;
+            /* Link color */
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #adb5bd;
+            /* Lighter grey on hover */
+        }
+
+        .container {
+            margin: 40px 100px 100px 200px;
+            padding: 40px;
+            background-color: #fff;
+            /* White background for container */
+            border-radius: 8px;
+            /* Rounded corners */
+        }
+
+        .title {
+            font-size: 36px;
+            /* Title size */
+            font-weight: bold;
+            /* Bold title */
+            text-align: center;
+            /* Center the title */
+            margin-bottom: 30px;
+            /* Space below title */
+        }
+
+        .footer {
+            background-color: #343a40;
+            /* Dark footer */
+            color: #ffffff;
+            /* White text */
+            text-align: left;
+            /* Left aligned footer text */
+            padding: 15px;
+            /* Padding around footer */
+            position: fixed;
+            /* Fixed position */
+            bottom: 0;
+            /* Stick to bottom */
+            left: 0;
+            width: 100%;
+            /* Full width */
+        }
+
+        table {
+            margin-top: 20px;
+            /* Space above the table */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="col-md-2 text-md-end">
+            <img class="img-fluid" src="{% static 'assets/logo.png' %}" alt="logo">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                {% if request.session.role == 'Commuter' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reservation' %}">Reserve Your Spot</a>
+                </li>
+                {% endif %}
+                {% if request.session.role == 'Commuter' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="#">View Your Reservation</a>
+                </li>
+                {% endif %}
+                {% if request.session.role == 'Administrator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'parking_manager' %}">Parking Manager</a>
+                </li>
+                {% endif %}
+                {% if request.session.role == 'Administrator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reservation_report' %}">Reservation Report</a>
+                </li>
+                {% endif %}
+                {% if request.session.role == 'Administrator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'transaction' %}">Transaction Record</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="title">Transaction History</h2>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>PayID</th>
+                    <th>CommID</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.PayID }}</td>
+                    <td>{{ transaction.CommID.CommID }}</td>
+                    <td>{{ transaction.Method }}</td>
+                    <td>RM{{ transaction.Amount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    <div class="footer">
+        <p>Copyright © 2024 Muhammad Asyraf Bin Zakaria</p>|
+        <a href="{% url 'logout' %}" class="text-white">Logout</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

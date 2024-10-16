@@ -1,0 +1,231 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Reservation - MRT Parking Reservation System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add the Datepicker and Timepicker CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #f8f9fa; 
+            border-bottom: 2px solid #343a40;
+        }
+
+        .navbar-brand {
+            color: #343a40;
+        }
+
+        .navbar-nav .nav-link {
+            color: #343a40;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #adb5bd;
+        }
+
+        /* Container for the form and centering */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .reservation-container {
+            background-color: #e9ecef;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px; /* Reduced max-width */
+            width: 100%;
+        }
+
+        .reservation-container h2 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px; /* Reduced margin */
+            color: #343a40;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control {
+            height: 40px; /* Reduced height */
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background-color: #343a40;
+            border: none;
+            height: 45px; /* Reduced button height */
+            font-size: 16px; /* Reduced font size */
+            font-weight: bold;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #495057;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: #ffffff;
+            text-align: left;
+            padding: 15px;
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="col-md-2 text-md-end"> 
+            <img class="img-fluid" src="{% static 'assets/logo.png' %}" alt="logo">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
+                    {% if request.session.role == 'Commuter' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'reservation_creation' %}">Reserve Your Spot</a>
+                        </li>
+                    {% endif %}
+                    {% if request.session.role == 'Commuter' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">View Your Reservation</a>
+                    </li>
+                    {% endif %}
+                    {% if request.session.role == 'Administrator' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'parking_manager' %}">Parking Manager</a>
+                    </li>
+                    {% endif %}
+                    {% if request.session.role == 'Administrator' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservation_report' %}">Reservation Report</a>
+                    </li>
+                    {% endif %}
+                    {% if request.session.role == 'Administrator' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'transaction' %}">Transaction Record</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="reservation-container">
+            <h2>Reserve Your Parking Spot</h2>
+
+            {% if messages %}
+            <div class="alert-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'reservation_creation' %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="station_name">Parked Station</label>
+                        <select id="station_name" name="station" class="form-control">
+                            <option>Select</option>
+                            {% for MRT in spot_park %}
+                                <option value="{{ MRT.0 }}">{{ MRT.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="chooseLevel">Choose Level</label>
+                        <select id="chooseLevel" name="level" class="form-control">
+                            <option>Select</option>
+                            <option value="1">First</option>
+                            <option value="2">Second</option>
+                            <option value="3">Third</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="box_parking">Parking Box</label>
+                        <select id="box_parking" name="box_no" class="form-control">
+                            <option>Select</option>
+                            {% for box in BoxPark %}
+                                <option value="{{ box.0 }}">{{ box.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div> 
+                    <div class="col-md-6 form-group">
+                        <label for="date_time_start">Start Date & Time</label>
+                        <input type="datetime-local" id="date_time_start" name="date_time_start" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="date_time_end">End Date & Time</label>
+                        <input type="datetime-local" id="date_time_end" name="date_time_end" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="vehiclePlate">Vehicle Plate Number</label>
+                        <input type="text" id="plate_no" name="plate_no" class="form-control" placeholder="Enter Vehicle Plate Number">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Reserve and Pay</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer" text>
+        <p>Copyright © 2024 Muhammad Asyraf Bin Zakaria</p>| 
+        <a href="{% url 'logout' %}" class="text-white">Logout</a>
+    </div>
+
+    <!-- Datepicker and Timepicker JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,216 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Paid - MRT Parking Reservation System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #343a40;
+        }
+
+        .navbar-brand {
+            color: #343a40;
+        }
+
+        .navbar-nav .nav-link {
+            color: #343a40;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #adb5bd;
+        }
+
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            max-width: 600px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: #ffffff;
+            text-align: left;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: #343a40;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #495057;
+        }
+
+        /* Print section */
+        @media print {
+            #printSection {
+                position: absolute; /* Position it absolutely for printing */
+                top: 0; /* Start from the top */
+                left: 0; /* Start from the left */
+                width: 300px; /* Set a narrower width typical for receipts */
+                height: auto; /* Allow height to adjust to content */
+                margin: 0; /* Remove any margins */
+                padding: 10px; /* Add some padding for aesthetics */
+                border: 1px solid #000; /* Optional: border around the receipt */
+                background: #fff; /* Ensure a white background for print */
+                font-family: Arial, sans-serif; /* Use a clean font */
+            }
+        }
+
+        /* Style for print slip */
+        #printSection {
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            margin: 20px auto;
+            width: 80%;
+            text-align: left;
+        }
+
+        #printSection h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #printSection p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="col-md-2 text-md-end">
+            <img class="img-fluid" src="{% static 'assets/logo.png' %}" alt="logo">
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                {% if request.session.role == 'Commuter' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservation_creation' %}">Reserve Your Spot</a>
+                    </li>
+                {% endif %}
+                {% if request.session.role == 'Commuter' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reservation_view' %}">View Your Reservation</a>
+                </li>
+                {% endif %}
+                {% if request.session.role == 'Administrator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'parking_manager' %}">Parking Manager</a>
+                </li>
+                {% endif %}
+                {% if request.session.role == 'Administrator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reservation_report' %}">Reservation Report</a>
+                </li>
+                {% endif %}
+                {% if request.session.role == 'Administrator' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'transaction' %}">Transaction Record</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Payment Confirmation Section -->
+    <div class="container">
+        <div class="title">Payment Successful</div>
+        <p class="text-center">Thank you for your payment! Your transaction has been successfully completed.</p>
+        
+        <!-- Payment Details Section -->
+        <div class="mb-4">
+            <h5>Your Payment Details:</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Transaction ID:</strong> {{ transaction_id }}</p>
+                    <p><strong>CommID:</strong> {{ request.session.reservation_data.CommID }}</p>
+                    <p><strong>Parking ID:</strong> {{ request.session.reservation_data.ParkID }}</p>
+                    <p><strong>Vehicle Plate Number:</strong> {{ request.session.reservation_data.PlateNo }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Start Time:</strong> {{ request.session.reservation_data.DateTimeStart|default:"Not available" }}</p>
+                    <p><strong>End Time:</strong> {{ request.session.reservation_data.DateTimeEnd|default:"Not available" }}</p>
+                    <p><strong>Amount Paid:</strong> RM {{ amount }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden Print Section -->
+        <div id="printSection" style="display: none;">
+            <h3>Payment Slip</h3>
+            <p><strong>Transaction ID:</strong> {{ transaction_id }}</p>
+            <p><strong>CommID:</strong> {{ request.session.reservation_data.CommID }}</p>
+            <p><strong>Parking ID:</strong> {{ request.session.reservation_data.ParkID }}</p>
+            <p><strong>Vehicle Plate Number:</strong> {{ request.session.reservation_data.PlateNo }}</p>
+            <p><strong>Start Time:</strong> {{ request.session.reservation_data.DateTimeStart|default:"Not available" }}</p>
+            <p><strong>End Time:</strong> {{ request.session.reservation_data.DateTimeEnd|default:"Not available" }}</p>
+            <p><strong>Amount Paid:</strong> RM {{ amount }}</p>
+        </div>
+
+        <!-- Buttons for Print and View Reservation -->
+        <div class="text-center">
+            <button onclick="printSlip()" class="btn btn-primary">Print Payment Slip</button>
+            <a href="{% url 'reservation_view' %}" class="btn btn-primary ml-2">View Reservation</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Copyright © 2024 Muhammad Asyraf Bin Zakaria</p>|
+        <a href="{% url 'logout' %}" class="text-white">Logout</a>
+    </footer>
+
+    <script>
+    function printSlip() {
+        // Display the print section and hide others if needed
+        var printContents = document.getElementById('printSection').innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents; // Set body to the print content
+        window.print(); // Trigger the print dialog
+        document.body.innerHTML = originalContents; // Restore original content
+    }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
